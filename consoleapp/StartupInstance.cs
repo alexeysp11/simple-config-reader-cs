@@ -1,4 +1,5 @@
 using SimpleConfigReader.Core.ConfigurationManagers;
+using SimpleConfigReader.Core.Models;
 using SimpleConfigReader.Core.ObjectPooling;
 
 namespace SimpleConfigReader.ConsoleApp;
@@ -8,15 +9,23 @@ namespace SimpleConfigReader.ConsoleApp;
 /// </summary>
 public class StartupInstance : IStartupInstance
 {
+    private readonly string m_directoryPath;
     private IConfigurationManager m_xmlConfigurationManager;
     private IConfigurationManager m_csvConfigurationManager;
     private IConfigurationPool m_configurationPool;
 
     public StartupInstance(
+        CommonConfigSettings commonConfigSettings,
         XmlConfigurationManager xmlConfigurationManager,
         CsvConfigurationManager csvConfigurationManager,
         IConfigurationPool configurationPool)
     {
+        if (commonConfigSettings == null)
+            throw new System.ArgumentNullException(nameof(commonConfigSettings), "Common config settings could not be null");
+        if (commonConfigSettings.DirectoryPath == null)
+            throw new System.ArgumentNullException(nameof(commonConfigSettings.DirectoryPath), "Directory path from the common config settings could not be null or empty");
+
+        m_directoryPath = commonConfigSettings.DirectoryPath;
         m_xmlConfigurationManager = xmlConfigurationManager;
         m_csvConfigurationManager = csvConfigurationManager;
         m_configurationPool = configurationPool;
@@ -27,11 +36,9 @@ public class StartupInstance : IStartupInstance
     /// </summary>
     public void Start()
     {
-        string directoryPath = "data";
-
         // Reading XML configurations.
-        ReadConfigurations(directoryPath, "*.xml", "XML", ImportConfigurationFromXml);
-        ReadConfigurations(directoryPath, "*.csv", "CSV", ImportConfigurationFromCsv);
+        ReadConfigurations(m_directoryPath, "*.xml", "XML", ImportConfigurationFromXml);
+        ReadConfigurations(m_directoryPath, "*.csv", "CSV", ImportConfigurationFromCsv);
 
         PrintConfigurations();
     }

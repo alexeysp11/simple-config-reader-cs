@@ -41,6 +41,10 @@ public class Program
         var csvSettings = GetCsvSettings(appsettingsConfig);
         services.AddSingleton(xmlSettings);
         services.AddSingleton(csvSettings);
+        services.AddSingleton(new CommonConfigSettings
+        {
+            DirectoryPath = appsettingsConfig.GetValue<string>("commonConfigSettings:directoryPath")
+        });
     }
 
     private static XmlSettings GetXmlSettings(IConfigurationRoot appsettingsConfig)
