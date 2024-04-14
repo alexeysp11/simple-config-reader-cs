@@ -6,13 +6,25 @@ namespace SimpleConfigReader.Core.ConfigurationManagers;
 /// <summary>
 /// Manager for getting configuration from XML files.
 /// </summary>
-public class XmlConfigurationManager : BaseConfigurationManager, IConfigurationManager
+public class XmlConfigurationManager : IConfigurationManager
 {
+    private readonly string m_rootObjectName;
+    private Dictionary<string, List<string>> m_fieldMappings;
+
     /// <summary>
     /// Default constructor.
     /// </summary>
-    public XmlConfigurationManager(string jsonFilePath, string rootObjectName) : base(jsonFilePath, rootObjectName)
+    public XmlConfigurationManager(XmlSettings settings)
     {
+        if (settings == null)
+            throw new System.ArgumentNullException(nameof(settings), "Settings could not be null");
+        if (string.IsNullOrEmpty(settings.RootObjectName))
+            throw new ArgumentNullException(nameof(settings.RootObjectName), "Root object name could not be null");
+        if (settings.FieldMappings == null)
+            throw new ArgumentNullException(nameof(settings.FieldMappings), "Field mappings could not be null");
+
+        m_rootObjectName = settings.RootObjectName;
+        m_fieldMappings = settings.FieldMappings;
     }
 
     /// <summary>
@@ -20,7 +32,7 @@ public class XmlConfigurationManager : BaseConfigurationManager, IConfigurationM
     /// </summary>
     /// <param name="configFilePath">Specified name of the config file.</param>
     /// <returns>Instance of the Configuration object.</returns>
-    public override Configuration ImportConfiguration(string configFilePath)
+    public Configuration ImportConfiguration(string configFilePath)
     {
         if (string.IsNullOrEmpty(configFilePath))
             throw new System.ArgumentNullException(nameof(configFilePath), "Config file path could not be null or empty");

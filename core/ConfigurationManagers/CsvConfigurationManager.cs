@@ -5,13 +5,25 @@ namespace SimpleConfigReader.Core.ConfigurationManagers;
 /// <summary>
 /// Manager for getting configuration from CSV files.
 /// </summary>
-public class CsvConfigurationManager : BaseConfigurationManager, IConfigurationManager
+public class CsvConfigurationManager : IConfigurationManager
 {
+    private Dictionary<string, int> m_classFieldIndexes;
+    private List<string> m_separators;
+
     /// <summary>
     /// Default constructor.
     /// </summary>
-    public CsvConfigurationManager(string jsonFilePath, string rootObjectName) : base(jsonFilePath, rootObjectName)
+    public CsvConfigurationManager(CsvSettings settings)
     {
+        if (settings == null) 
+            throw new System.ArgumentNullException(nameof(settings), "Settings could not be null");
+        if (settings.ClassFieldIndexes == null)
+            throw new System.ArgumentNullException(nameof(settings.ClassFieldIndexes), "Class field indexes could not be null");
+        if (settings.Separators == null)
+            throw new System.ArgumentNullException(nameof(settings.Separators), "Separators could not be null");
+
+        m_classFieldIndexes = settings.ClassFieldIndexes;
+        m_separators = settings.Separators;
     }
 
     /// <summary>
@@ -19,8 +31,31 @@ public class CsvConfigurationManager : BaseConfigurationManager, IConfigurationM
     /// </summary>
     /// <param name="configFilePath">Specified name of the config file.</param>
     /// <returns>Instance of the Configuration object.</returns>
-    public override Configuration ImportConfiguration(string configFilePath)
+    public Configuration ImportConfiguration(string configFilePath)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(configFilePath))
+            throw new System.ArgumentNullException("File path could not be null or empty");
+        
+        string[] lines = File.ReadAllLines(configFilePath);
+        if (lines.Length == 0)
+            throw new System.Exception($"Could not get configuration because the specified file is empty: {configFilePath}");
+
+        foreach (var line in lines)
+        {
+            foreach (var separator in m_separators)
+            {
+                string[] parts = line.Split(separator);
+                if (parts.Length == m_classFieldIndexes.Count)
+                {
+                    Configuration configuration = new Configuration();
+                    configuration.Name = parts[m_classFieldIndexes["Name"]];
+                    configuration.Description = parts[m_classFieldIndexes["Description"]];
+
+                    return configuration;
+                }
+            }
+        }
+
+        throw new System.Exception($"Could not get configuration because the specified file contains incorrect number of parts: {configFilePath}");
     }
 }

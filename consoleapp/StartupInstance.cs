@@ -12,12 +12,14 @@ public class StartupInstance : IStartupInstance
     private IConfigurationManager m_csvConfigurationManager;
     private IConfigurationPool m_configurationPool;
 
-    public StartupInstance()
+    public StartupInstance(
+        XmlConfigurationManager xmlConfigurationManager,
+        CsvConfigurationManager csvConfigurationManager,
+        IConfigurationPool configurationPool)
     {
-        string appSettings = "appsettings.json";
-        m_xmlConfigurationManager = new XmlConfigurationManager(appSettings, "config");
-        m_csvConfigurationManager = new CsvConfigurationManager(appSettings, "config");
-        m_configurationPool = new ConfigurationPool();
+        m_xmlConfigurationManager = xmlConfigurationManager;
+        m_csvConfigurationManager = csvConfigurationManager;
+        m_configurationPool = configurationPool;
     }
 
     /// <summary>
@@ -29,12 +31,7 @@ public class StartupInstance : IStartupInstance
 
         // Reading XML configurations.
         ReadConfigurations(directoryPath, "*.xml", "XML", ImportConfigurationFromXml);
-
-        //files = Directory.GetFiles(directoryPath, "*.csv");
-        //foreach (var file in files)
-        //{
-        //    ImportConfigurationFromCsv(file);
-        //}
+        ReadConfigurations(directoryPath, "*.csv", "CSV", ImportConfigurationFromCsv);
 
         PrintConfigurations();
     }
@@ -49,15 +46,16 @@ public class StartupInstance : IStartupInstance
         if (files.Length == 0)
             return;
 
-        Task[] tasks = new Task[files.Length];
+        //Task[] tasks = new Task[files.Length];
 
         System.Console.WriteLine($"Reading {fileExtension} configurations: started");
         for (int i = 0; i < files.Length; i++)
         {
             int index = i;
-            tasks[index] = Task.Run(() => processingDelegate(files[index]));
+            //tasks[index] = Task.Run(() => processingDelegate(files[index]));
+            processingDelegate(files[index]);
         }
-        Task.WaitAll(tasks);
+        //Task.WaitAll(tasks);
         System.Console.WriteLine($"Reading {fileExtension} configurations: finished");
     }
 
@@ -93,7 +91,7 @@ public class StartupInstance : IStartupInstance
         var configurations = m_configurationPool.Configurations;
         foreach (var config in configurations)
         {
-            Console.WriteLine(config);
+            System.Console.WriteLine(config);
         }
     }
 }
