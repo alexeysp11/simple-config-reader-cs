@@ -33,7 +33,7 @@ public class Program
         services.AddSingleton<XmlConfigurationManager>();
 
         // Object pooling.
-        services.AddSingleton<IConfigurationPool, ConfigurationPool>();
+        services.AddSingleton<IConfigurationPool, ConcurrentConfigurationPool>();
 
         // Configuration settings.
         var appsettingsConfig = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();

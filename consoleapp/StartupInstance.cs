@@ -46,16 +46,16 @@ public class StartupInstance : IStartupInstance
         if (files.Length == 0)
             return;
 
-        //Task[] tasks = new Task[files.Length];
+        Task[] tasks = new Task[files.Length];
 
         System.Console.WriteLine($"Reading {fileExtension} configurations: started");
         for (int i = 0; i < files.Length; i++)
         {
             int index = i;
-            //tasks[index] = Task.Run(() => processingDelegate(files[index]));
-            processingDelegate(files[index]);
+            tasks[index] = Task.Run(() => processingDelegate(files[index]));
+            //processingDelegate(files[index]);
         }
-        //Task.WaitAll(tasks);
+        Task.WaitAll(tasks);
         System.Console.WriteLine($"Reading {fileExtension} configurations: finished");
     }
 
