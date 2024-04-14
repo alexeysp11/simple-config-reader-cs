@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Xml;
 using SimpleConfigReader.Core.Models;
 
@@ -10,6 +11,7 @@ public class XmlConfigurationManager : IConfigurationManager
 {
     private readonly string m_rootObjectName;
     private Dictionary<string, List<string>> m_fieldMappings;
+    private PropertyInfo[] m_configurationProperties;
 
     /// <summary>
     /// Default constructor.
@@ -25,6 +27,7 @@ public class XmlConfigurationManager : IConfigurationManager
 
         m_rootObjectName = settings.RootObjectName;
         m_fieldMappings = settings.FieldMappings;
+        m_configurationProperties = typeof(Configuration).GetProperties();
     }
 
     /// <summary>
@@ -41,10 +44,9 @@ public class XmlConfigurationManager : IConfigurationManager
         doc.Load(configFilePath);
 
         var configuration = new Configuration();
-        var fields = typeof(Configuration).GetProperties();
         foreach (var fieldName in m_fieldMappings.Keys)
         {
-            var field = fields.FirstOrDefault(x => x.Name == fieldName);
+            var field = m_configurationProperties.FirstOrDefault(x => x.Name == fieldName);
             if (field == null)
             {
                 continue;
