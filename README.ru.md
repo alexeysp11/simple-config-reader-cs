@@ -17,13 +17,13 @@ public class Configuration
 ```XML
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-<name>Конфигурация 1</name>
-<description>Описание Конфигурации 1</description>
+<name>Configuration 1</name>
+<description>Configuration description 1</description>
 </config>
 ```
 
 ```CSV
-Конфигурация 2;Описание Конфигурации 2
+Configuration 2;Configuration description 2
 ```
 
 После обработки каждого нового файла программа выводит список всех имеющихся Конфигураций. В рамках тестового задания этот список можно просто хранить в памяти (например, публичная статическая переменная).
