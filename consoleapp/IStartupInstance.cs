@@ -8,5 +8,5 @@ public interface IStartupInstance
     /// <summary>
     /// Method for standardized launch of an application instance.
     /// </summary>
-    void Run();
+    void Start();
 }

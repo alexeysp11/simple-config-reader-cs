@@ -1,9 +1,19 @@
 namespace SimpleConfigReader.Core.Models;
 
+/// <summary>
+/// Model of the configuaration item.
+/// </summary>
 public class Configuration
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
+    /// <summary>
+    /// Name of the configuaration item.
+    /// </summary>
+    public string? Name { get; set; }
+
+    /// <summary>
+    /// Description of the configuaration item.
+    /// </summary>
+    public string? Description { get; set; }
 
     public override string ToString()
     {

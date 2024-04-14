@@ -11,7 +11,6 @@ public class XmlConfigurationManager : BaseConfigurationManager, IConfigurationM
     /// <summary>
     /// Default constructor.
     /// </summary>
-    /// <param name="rootObjectName"></param>
     public XmlConfigurationManager(string jsonFilePath, string rootObjectName) : base(jsonFilePath, rootObjectName)
     {
     }
@@ -30,17 +29,21 @@ public class XmlConfigurationManager : BaseConfigurationManager, IConfigurationM
         doc.Load(configFilePath);
 
         var configuration = new Configuration();
+        var fields = typeof(Configuration).GetProperties();
         foreach (var fieldName in m_fieldMappings.Keys)
         {
+            var field = fields.FirstOrDefault(x => x.Name == fieldName);
+            if (field == null)
+            {
+                continue;
+            }
+
             foreach (string xmlField in m_fieldMappings[fieldName])
             {
                 XmlNode fieldNode = doc.SelectSingleNode($"/{m_rootObjectName}/{xmlField}");
                 if (fieldNode != null)
                 {
-                    if (fieldName == "Name")
-                        configuration.Name = fieldNode.InnerText;
-                    else if (fieldName == "Description")
-                        configuration.Description = fieldNode.InnerText;
+                    field.SetValue(configuration, fieldNode.InnerText);
                 }
             }
         }
