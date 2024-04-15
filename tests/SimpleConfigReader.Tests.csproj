@@ -21,6 +21,10 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\core\SimpleConfigReader.Core.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <None Update="data\configuration01.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
