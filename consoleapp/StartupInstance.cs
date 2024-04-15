@@ -37,8 +37,8 @@ public class StartupInstance : IStartupInstance
     public void Start()
     {
         // Reading XML configurations.
-        ReadConfigurations(m_directoryPath, "*.xml", "XML", ImportConfigurationFromXml);
-        ReadConfigurations(m_directoryPath, "*.csv", "CSV", ImportConfigurationFromCsv);
+        ReadConfigurations(m_directoryPath, "*.xml", "XML", m_xmlConfigurationManager.ImportConfiguration);
+        ReadConfigurations(m_directoryPath, "*.csv", "CSV", m_csvConfigurationManager.ImportConfiguration);
 
         PrintConfigurations();
     }
@@ -47,7 +47,7 @@ public class StartupInstance : IStartupInstance
         string directoryPath,
         string mask,
         string fileExtension,
-        Action<string> processingDelegate)
+        Func<string, Configuration> processingDelegate)
     {
         string[] files = Directory.GetFiles(directoryPath, mask);
         if (files.Length == 0)
@@ -55,36 +55,26 @@ public class StartupInstance : IStartupInstance
 
         Task[] tasks = new Task[files.Length];
 
+        Console.WriteLine();
         System.Console.WriteLine($"Reading {fileExtension} configurations: started");
         for (int i = 0; i < files.Length; i++)
         {
             int index = i;
-            tasks[index] = Task.Run(() => processingDelegate(files[index]));
-            //processingDelegate(files[index]);
+            tasks[index] = Task.Run(() => ImportConfigurationFromFile(files[index], processingDelegate));
         }
         Task.WaitAll(tasks);
         System.Console.WriteLine($"Reading {fileExtension} configurations: finished");
     }
 
-    private void ImportConfigurationFromXml(string filePath)
+    private void ImportConfigurationFromFile(
+        string filePath, 
+        Func<string, Configuration> processingDelegate)
     {
         try
         {
-            var configuration = m_xmlConfigurationManager.ImportConfiguration(filePath);
+            var configuration = processingDelegate(filePath);
             m_configurationPool.AddConfiguration(configuration);
-        }
-        catch (System.Exception ex)
-        {
-            System.Console.WriteLine($"- Exception while parsing the file '{filePath}': '{ex.Message}'");
-        }
-    }
-
-    private void ImportConfigurationFromCsv(string filePath)
-    {
-        try
-        {
-            var configuration = m_csvConfigurationManager.ImportConfiguration(filePath);
-            m_configurationPool.AddConfiguration(configuration);
+            System.Console.WriteLine($"- Successfully parsed the file '{filePath}'");
         }
         catch (System.Exception ex)
         {
@@ -94,6 +84,7 @@ public class StartupInstance : IStartupInstance
 
     private void PrintConfigurations()
     {
+        Console.WriteLine();
         Console.WriteLine("Configurations:");
         var configurations = m_configurationPool.Configurations;
         foreach (var config in configurations)
