@@ -15,4 +15,9 @@ public class CommonConfigSettings
     /// Directory path.
     /// </summary>
     public string? DirectoryPath { get; set; }
+
+    /// <summary>
+    /// Indicates whether to use asynchronous reading of configuration files.
+    /// </summary>
+    public bool UseAsyncReading { get; set; }
 }
