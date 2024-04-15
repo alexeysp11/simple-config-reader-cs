@@ -5,16 +5,16 @@ namespace SimpleConfigReader.Benchmarks.Stabs;
 
 public static class XmlSettingsStab
 {
-    private static XmlSettings s_xmlSettings;
+    private static XmlSettings s_settings;
 
     static XmlSettingsStab()
     {
-        s_xmlSettings = new XmlSettings
+        s_settings = new XmlSettings
         {
             RootObjectName = "config",
             FieldMappings = new Dictionary<string, List<string>>()
         };
-        s_xmlSettings.FieldMappings["Name"] = new List<string>
+        s_settings.FieldMappings["Name"] = new List<string>
         {
             "Name",
             "name",
@@ -22,7 +22,7 @@ public static class XmlSettingsStab
             "configName",
             "configname"
         };
-        s_xmlSettings.FieldMappings["Description"] = new List<string>
+        s_settings.FieldMappings["Description"] = new List<string>
         {
             "Description",
             "description",
@@ -34,6 +34,6 @@ public static class XmlSettingsStab
 
     public static XmlSettings GetXmlSettings()
     {
-        return s_xmlSettings;
+        return s_settings;
     }
 }

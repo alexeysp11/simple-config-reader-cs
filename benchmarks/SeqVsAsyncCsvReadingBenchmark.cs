@@ -11,10 +11,10 @@ using SimpleConfigReader.Core.ObjectPooling;
 namespace SimpleConfigReader.Benchmarks;
 
 /// <summary>
-/// A class that tests the performance of sequential and asynchronous reading XML files.
+/// A class that tests the performance of sequential and asynchronous reading CSV files.
 /// </summary>
 [MemoryDiagnoser]
-public class SeqVsAsyncXmlReadingBenchmark
+public class SeqVsAsyncCsvReadingBenchmark
 {
     private string[] m_files;
     private IConfigurationManager m_configurationManager;
@@ -22,12 +22,12 @@ public class SeqVsAsyncXmlReadingBenchmark
     /// <summary>
     /// Default constructor.
     /// </summary>
-    public SeqVsAsyncXmlReadingBenchmark()
+    public SeqVsAsyncCsvReadingBenchmark()
     {
-        m_files = Directory.GetFiles("data", ".xml");
+        m_files = Directory.GetFiles("data", ".csv");
 
-        var settings = XmlSettingsStab.GetXmlSettings();
-        m_configurationManager = new XmlConfigurationManager(settings);
+        var settings = CsvSettingsStab.GetCsvSettings();
+        m_configurationManager = new CsvConfigurationManager(settings);
     }
 
     [Benchmark]
