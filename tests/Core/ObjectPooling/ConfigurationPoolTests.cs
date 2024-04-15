@@ -15,7 +15,7 @@ public class ConfigurationPoolTests
 
     public ConfigurationPoolTests()
     {
-        m_stabConfigurations = ConfigurationStabs.GetConfigurations();
+        m_stabConfigurations = ConfigurationStab.GetConfigurations();
     }
 
     [Fact]

@@ -3,11 +3,11 @@ using SimpleConfigReader.Core.Models;
 
 namespace SimpleConfigReader.Tests.Stabs;
 
-internal static class ConfigurationStabs
+internal static class ConfigurationStab
 {
     private static List<Configuration> s_stabConfigurations;
 
-    static ConfigurationStabs()
+    static ConfigurationStab()
     {
         s_stabConfigurations = new List<Configuration>
         {

@@ -15,7 +15,7 @@ public class ConcurrentConfigurationPoolTests
 
     public ConcurrentConfigurationPoolTests()
     {
-        m_stabConfigurations = ConfigurationStabs.GetConfigurations();
+        m_stabConfigurations = ConfigurationStab.GetConfigurations();
     }
 
     [Fact]
