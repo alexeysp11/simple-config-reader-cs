@@ -10,6 +10,7 @@ namespace SimpleConfigReader.ConsoleApp;
 public class StartupInstance : IStartupInstance
 {
     private readonly string m_directoryPath;
+    private readonly bool m_useAsyncReading;
     private IConfigurationManager m_xmlConfigurationManager;
     private IConfigurationManager m_csvConfigurationManager;
     private IConfigurationPool m_configurationPool;
@@ -26,6 +27,7 @@ public class StartupInstance : IStartupInstance
             throw new System.ArgumentNullException(nameof(commonConfigSettings.DirectoryPath), "Directory path from the common config settings could not be null or empty");
 
         m_directoryPath = commonConfigSettings.DirectoryPath;
+        m_useAsyncReading = commonConfigSettings.UseAsyncReading;
         m_xmlConfigurationManager = xmlConfigurationManager;
         m_csvConfigurationManager = csvConfigurationManager;
         m_configurationPool = configurationPool;
@@ -53,16 +55,27 @@ public class StartupInstance : IStartupInstance
         if (files.Length == 0)
             return;
 
-        Task[] tasks = new Task[files.Length];
-
         Console.WriteLine();
         System.Console.WriteLine($"Reading {fileExtension} configurations: started");
-        for (int i = 0; i < files.Length; i++)
+
+        if (m_useAsyncReading)
         {
-            int index = i;
-            tasks[index] = Task.Run(() => ImportConfigurationFromFile(files[index], processingDelegate));
+            Task[] tasks = new Task[files.Length];
+            for (int i = 0; i < files.Length; i++)
+            {
+                int index = i;
+                tasks[index] = Task.Run(() => ImportConfigurationFromFile(files[index], processingDelegate));
+            }
+            Task.WaitAll(tasks);
         }
-        Task.WaitAll(tasks);
+        else
+        {
+            foreach (var file in files)
+            {
+                ImportConfigurationFromFile(file, processingDelegate);
+            }
+        }
+
         System.Console.WriteLine($"Reading {fileExtension} configurations: finished");
     }
 

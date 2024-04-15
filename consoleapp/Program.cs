@@ -43,7 +43,8 @@ public class Program
         services.AddSingleton(csvSettings);
         services.AddSingleton(new CommonConfigSettings
         {
-            DirectoryPath = appsettingsConfig.GetValue<string>("commonConfigSettings:directoryPath")
+            DirectoryPath = appsettingsConfig.GetValue<string>("commonConfigSettings:directoryPath"),
+            UseAsyncReading = appsettingsConfig.GetValue<bool>("commonConfigSettings:useAsyncReading")
         });
     }
 
